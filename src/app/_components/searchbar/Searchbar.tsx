@@ -1,6 +1,15 @@
+import { SearchAction } from "@/app/_store/slices/actionTypes";
 import Image from "next/image";
 
-export function Searchbar() {
+interface SearchbarProps {
+    dispatch: React.Dispatch<SearchAction>;
+}
+
+export function Searchbar({ dispatch }: SearchbarProps) {
+    function onSearch(e: React.ChangeEvent<HTMLInputElement>) {
+        dispatch({ type: "SEARCH", payload: e.target.value });
+    }
+
     return (
         <div
             data-testid="search-container"
@@ -10,6 +19,7 @@ export function Searchbar() {
                 <Image src="search.svg" alt="Search icon" width={28} height={28} />
             </i>
             <input
+                onChange={onSearch}
                 data-testid="searchbar"
                 type="text"
                 name=""
