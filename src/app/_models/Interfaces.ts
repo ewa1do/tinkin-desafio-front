@@ -1,5 +1,5 @@
 export interface Recipe {
-    id: number;
+    id: number | string;
     name: string;
     reviews: number;
     cookedBefore: boolean;
