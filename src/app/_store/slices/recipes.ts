@@ -8,6 +8,7 @@ interface InitialState {
     filteredRecipes: Recipe[] | [];
     search: string;
     filter: filterOptions;
+    selectedRecipe: Recipe;
 }
 
 export const initialState: InitialState = {
@@ -15,6 +16,7 @@ export const initialState: InitialState = {
     filteredRecipes: [...recipes],
     search: "",
     filter: "all",
+    selectedRecipe: {} as Recipe,
 };
 
 export function recipesReducer(state: InitialState, action: Action) {
@@ -76,6 +78,9 @@ export function recipesReducer(state: InitialState, action: Action) {
                 recipes: toggleCookedBeforeById,
                 filteredRecipes: toggleCookedBeforeById,
             };
+
+        case "SELECTED_RECIPE":
+            return { ...state, selectedRecipe: action.payload };
 
         default:
             return state;
