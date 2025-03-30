@@ -77,7 +77,11 @@ export function ModalForm({
     }
 
     return (
-        <RecipeModal isOpen={isModalOpen} onClose={onCancel} title="New recipe">
+        <RecipeModal
+            isOpen={isModalOpen}
+            onClose={onCancel}
+            title={`${!isEditing ? "New recipe" : "Edit recipe"}`}
+        >
             <form id="modal-form" className="space-y-4" onSubmit={!isEditing ? onSubmit : onUpdate}>
                 <RecipeName handleChange={handleChange} formState={formState} />
                 <Ingredients formState={formState} setFormState={setFormState} />
