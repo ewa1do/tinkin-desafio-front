@@ -1,6 +1,5 @@
 import Image from "next/image";
-
-export const MAX_STARS_ALLOWED = 4;
+import { MAX_STARS_ALLOWED } from "@/app/_models/Types";
 
 export function StarRating({ reviews, size = "md" }: { reviews: number; size: "md" | "lg" }) {
     if (reviews > MAX_STARS_ALLOWED) reviews = MAX_STARS_ALLOWED;
