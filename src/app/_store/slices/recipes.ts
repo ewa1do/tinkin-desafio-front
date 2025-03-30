@@ -82,6 +82,10 @@ export function recipesReducer(state: InitialState, action: Action) {
         case "SELECTED_RECIPE":
             return { ...state, selectedRecipe: action.payload };
 
+        case "NEW_RECIPE":
+            const newRecipe = [...state.filteredRecipes, action.payload];
+            return { ...state, filteredRecipes: newRecipe, recipes: newRecipe };
+
         default:
             return state;
     }
