@@ -2,7 +2,11 @@ import { Recipe } from "@/app/_models/Interfaces";
 import { RecipeModal } from "./Modal";
 import { StarRating } from "../star-rating/StarRating";
 import { SwitchButton } from "../switch/SwitchButton";
-import { CookedBeforeToggleAction } from "@/app/_store/slices/actionTypes";
+import {
+    CookedBeforeToggleAction,
+    EditRecipeAction,
+    NewRecipeAction,
+} from "@/app/_store/slices/actionTypes";
 import { SetStateAction, useEffect, useState } from "react";
 import { ModalForm } from "./ModalForm";
 import { FormState } from "@/app/_lib/initialFormState";
@@ -16,7 +20,7 @@ export function ModalEdit({
     isModalOpen: boolean;
     setIsModalOpen: (arg: boolean) => void;
     recipe: Recipe;
-    dispatch: React.Dispatch<CookedBeforeToggleAction>;
+    dispatch: React.Dispatch<CookedBeforeToggleAction | EditRecipeAction | NewRecipeAction>;
 }) {
     const [localRecipe, setLocalRecipe] = useState(recipe);
     const [isEditing, setIsEditing] = useState(false);
