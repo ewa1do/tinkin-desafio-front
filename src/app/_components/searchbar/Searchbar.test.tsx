@@ -5,7 +5,7 @@ import { Searchbar } from "./Searchbar";
 
 describe("Tests for searchbar component", () => {
     beforeEach(() => {
-        render(<Searchbar />);
+        render(<Searchbar dispatch={() => {}} />);
     });
 
     it("Should exists in the DOM", () => {
