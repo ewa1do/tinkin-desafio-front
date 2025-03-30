@@ -3,7 +3,9 @@ import { RecipeModal } from "./Modal";
 import { StarRating } from "../star-rating/StarRating";
 import { SwitchButton } from "../switch/SwitchButton";
 import { CookedBeforeToggleAction } from "@/app/_store/slices/actionTypes";
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
+import { ModalForm } from "./ModalForm";
+import { FormState } from "@/app/_lib/initialFormState";
 
 export function ModalEdit({
     setIsModalOpen,
@@ -17,6 +19,7 @@ export function ModalEdit({
     dispatch: React.Dispatch<CookedBeforeToggleAction>;
 }) {
     const [localRecipe, setLocalRecipe] = useState(recipe);
+    const [isEditing, setIsEditing] = useState(false);
 
     useEffect(() => {
         setLocalRecipe(recipe);
@@ -31,7 +34,45 @@ export function ModalEdit({
     }
 
     return (
-        <RecipeModal title={recipe.name} isOpen={isModalOpen} onClose={() => setIsModalOpen(false)}>
+        <RecipeModal
+            title={!isEditing ? recipe.name : "Edit recipe"}
+            isOpen={isModalOpen}
+            onClose={() => setIsModalOpen(false)}
+        >
+            {!isEditing ? (
+                <ReadOnlyModal
+                    handleToggle={handleToggle}
+                    localRecipe={localRecipe}
+                    recipe={recipe}
+                    setIsEditing={setIsEditing}
+                />
+            ) : (
+                <ModalForm
+                    dispatch={dispatch}
+                    initialFormState={recipe as FormState}
+                    isModalOpen={isModalOpen}
+                    setIsModalOpen={setIsModalOpen}
+                    isEditing={isEditing}
+                    setIsEditing={setIsEditing}
+                />
+            )}
+        </RecipeModal>
+    );
+}
+
+function ReadOnlyModal({
+    recipe,
+    localRecipe,
+    handleToggle,
+    setIsEditing,
+}: {
+    recipe: Recipe;
+    localRecipe: Recipe;
+    handleToggle: () => void;
+    setIsEditing: React.Dispatch<SetStateAction<boolean>>;
+}) {
+    return (
+        <>
             <section className="grid grid-cols-1 gap-y-8">
                 <div>
                     <h4 className="text-base font-semibold mb-2">Ingredients</h4>
@@ -63,12 +104,12 @@ export function ModalEdit({
             </section>
             <div className="flex justify-end mt-20">
                 <button
-                    type="submit"
+                    onClick={() => setIsEditing(true)}
                     className="bg-[#0C969D] text-white font-semibold px-8 py-3 rounded-3xl cursor-pointer"
                 >
                     Edit
                 </button>
             </div>
-        </RecipeModal>
+        </>
     );
 }

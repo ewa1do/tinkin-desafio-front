@@ -86,6 +86,17 @@ export function recipesReducer(state: InitialState, action: Action) {
             const newRecipe = [...state.filteredRecipes, action.payload];
             return { ...state, filteredRecipes: newRecipe, recipes: newRecipe };
 
+        case "EDIT_RECIPE":
+            const editRecipe = state.filteredRecipes.map((recipe) => {
+                if (recipe.id === action.payload.id) {
+                    return { ...action.payload };
+                }
+
+                return recipe;
+            });
+
+            return { ...state, filteredRecipes: editRecipe, recipes: editRecipe };
+
         default:
             return state;
     }

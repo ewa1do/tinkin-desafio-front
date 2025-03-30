@@ -26,10 +26,16 @@ export type NewRecipeAction = {
     payload: Recipe;
 };
 
+export type EditRecipeAction = {
+    type: "EDIT_RECIPE";
+    payload: Recipe;
+};
+
 export type Action =
     | { type: "RECEIVED" }
     | SearchAction
     | CookedBeforeFilterAction
     | CookedBeforeToggleAction
     | SelectedRecipeAction
-    | NewRecipeAction;
+    | NewRecipeAction
+    | EditRecipeAction;

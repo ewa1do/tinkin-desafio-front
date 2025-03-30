@@ -6,37 +6,28 @@ import { SwitchButton } from "../switch/SwitchButton";
 import { RecipeModal } from "./Modal";
 import { SetStateAction, useState } from "react";
 import { MAX_STARS_ALLOWED } from "@/app/_models/Types";
-import { NewRecipeAction } from "@/app/_store/slices/actionTypes";
+import { EditRecipeAction, NewRecipeAction } from "@/app/_store/slices/actionTypes";
 import { notify } from "@/app/_lib/notification/notify";
+import { FormState } from "@/app/_lib/initialFormState";
 
 type HandleChangeType = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
 type SetFormStateType = React.Dispatch<React.SetStateAction<FormState>>;
-
-type FormState = {
-    name: string;
-    ingredients: string[];
-    preparation: string;
-    reviews: number;
-    cookedBefore: boolean;
-};
 
 export function ModalForm({
     isModalOpen,
     setIsModalOpen,
     dispatch,
+    initialFormState,
+    isEditing = false,
+    setIsEditing,
 }: {
     isModalOpen: boolean;
     setIsModalOpen: (arg: boolean) => void;
-    dispatch: React.Dispatch<NewRecipeAction>;
+    dispatch: React.Dispatch<NewRecipeAction | EditRecipeAction>;
+    initialFormState: FormState;
+    isEditing: boolean;
+    setIsEditing?: React.Dispatch<SetStateAction<boolean>> | null;
 }) {
-    const initialFormState = {
-        name: "",
-        ingredients: [],
-        preparation: "",
-        reviews: 0,
-        cookedBefore: true,
-    };
-
     const [formState, setFormState] = useState<FormState>(initialFormState);
 
     const missingInfo =
@@ -64,33 +55,86 @@ export function ModalForm({
         notify();
     }
 
+    function onUpdate(e: React.FormEvent<HTMLFormElement>) {
+        e.preventDefault();
+
+        if (missingInfo) {
+            notify("Oops, looks like you have missing info", "error");
+            return;
+        }
+
+        dispatch({ type: "EDIT_RECIPE", payload: { ...formState, id: formState.id } });
+        setFormState(initialFormState);
+        setIsModalOpen(false);
+        notify();
+    }
+
+    function onCancel() {
+        if (setIsEditing) {
+            setIsEditing(false);
+        }
+        setIsModalOpen(false);
+    }
+
     return (
-        <RecipeModal isOpen={isModalOpen} onClose={() => setIsModalOpen(false)} title="New recipe">
-            <form id="modal-form" className="space-y-4" onSubmit={onSubmit}>
-                <RecipeName handleChange={handleChange} />
+        <RecipeModal isOpen={isModalOpen} onClose={onCancel} title="New recipe">
+            <form id="modal-form" className="space-y-4" onSubmit={!isEditing ? onSubmit : onUpdate}>
+                <RecipeName handleChange={handleChange} formState={formState} />
                 <Ingredients formState={formState} setFormState={setFormState} />
-                <Preparation handleChange={handleChange} />
+                <Preparation handleChange={handleChange} formState={formState} />
                 <Reviews formState={formState} setFormState={setFormState} />
                 <CookedBefore formState={formState} setFormState={setFormState} />
 
-                <div className="flex justify-end mt-20">
-                    <button
-                        type="submit"
-                        className={`${
-                            missingInfo
-                                ? " bg-[#B2B2B3] cursor-not-allowed"
-                                : "bg-[#0C969D] cursor-pointer"
-                        } text-white font-semibold px-5 py-3 rounded-4xl`}
-                    >
-                        Create
-                    </button>
-                </div>
+                {!isEditing ? (
+                    <div className="flex justify-end mt-20">
+                        <button
+                            type="submit"
+                            className={`${
+                                missingInfo
+                                    ? " bg-[#B2B2B3] cursor-not-allowed"
+                                    : "bg-[#0C969D] cursor-pointer"
+                            } text-white font-semibold px-5 py-3 rounded-4xl`}
+                        >
+                            Create
+                        </button>
+                    </div>
+                ) : (
+                    <div className="flex justify-end mt-20 gap-x-3">
+                        <button
+                            onClick={() => {
+                                if (setIsEditing) {
+                                    setIsEditing(false);
+                                }
+                            }}
+                            type="button"
+                            className={`bg-[#fff] border-2 border-[#0C969D] text-[#0C969D] font-semibold px-5 py-3 rounded-4xl cursor-pointer`}
+                        >
+                            Cancel
+                        </button>
+                        <button
+                            type="submit"
+                            className={`${
+                                missingInfo
+                                    ? " bg-[#B2B2B3] cursor-not-allowed"
+                                    : "bg-[#0C969D] cursor-pointer"
+                            } text-white font-semibold px-5 py-3 rounded-4xl`}
+                        >
+                            Update
+                        </button>
+                    </div>
+                )}
             </form>
         </RecipeModal>
     );
 }
 
-function RecipeName({ handleChange }: { handleChange: HandleChangeType }) {
+function RecipeName({
+    formState,
+    handleChange,
+}: {
+    formState: FormState;
+    handleChange: HandleChangeType;
+}) {
     return (
         <div className="mb-10">
             <label htmlFor="name" className="block text-sm font-medium  mb-4">
@@ -101,6 +145,7 @@ function RecipeName({ handleChange }: { handleChange: HandleChangeType }) {
                 className="mt-1 block w-full border border-gray-300 rounded-md p-2 outline-0"
                 placeholder={`Title*\nE.g. Slow cooker beef and rice hot pot`}
                 onChange={handleChange}
+                value={formState?.name}
             ></textarea>
         </div>
     );
@@ -193,7 +238,13 @@ function Ingredients({
     );
 }
 
-function Preparation({ handleChange }: { handleChange: HandleChangeType }) {
+function Preparation({
+    formState,
+    handleChange,
+}: {
+    formState: FormState;
+    handleChange: HandleChangeType;
+}) {
     return (
         <div className="mb-10">
             <label htmlFor="text" className="block text-sm font-medium mb-4">
@@ -206,6 +257,7 @@ function Preparation({ handleChange }: { handleChange: HandleChangeType }) {
                 className="mt-1 block w-full border border-gray-300 rounded-md p-2 min-h-[172px] outline-0"
                 placeholder={`Instructions*\nWrite the steps...`}
                 onChange={handleChange}
+                value={formState?.preparation}
             ></textarea>
         </div>
     );
