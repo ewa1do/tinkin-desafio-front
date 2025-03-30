@@ -1,15 +1,6 @@
-import { Recipe } from "@/app/_models/Interfaces";
-import { filterOptions } from "@/app/_models/Types";
+import { InitialState, Recipe } from "@/app/_models/Interfaces";
 import { recipes } from "@/app/_lib/data";
 import { Action } from "./actionTypes";
-
-interface InitialState {
-    recipes: Recipe[];
-    filteredRecipes: Recipe[] | [];
-    search: string;
-    filter: filterOptions;
-    selectedRecipe: Recipe;
-}
 
 export const initialState: InitialState = {
     recipes: [...recipes],
