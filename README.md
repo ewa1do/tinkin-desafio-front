@@ -6,7 +6,7 @@ Web application for preserving traditional Andean recipes, developed with Next.j
 ## 🔗 Live Demo  
 **[View Demo](https://tinkin-desafio-front.vercel.app/)**
 
-![Project Banner](./public/images/home.png)
+![Project Banner](./public/home.png)
 
 ## 🛠 Core Technologies
 - **Frontend**: Next.js 15, React 19
